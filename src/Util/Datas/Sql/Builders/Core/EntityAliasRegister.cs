@@ -15,6 +15,11 @@ namespace Util.Datas.Sql.Builders.Core {
         }
 
         /// <summary>
+        /// From子句设置的实体类型
+        /// </summary>
+        public Type FromType { get; set; }
+
+        /// <summary>
         /// 实体别名列表
         /// </summary>
         public IDictionary<Type, string> Data { get; }
@@ -25,8 +30,6 @@ namespace Util.Datas.Sql.Builders.Core {
         /// <param name="entity">实体类型</param>
         /// <param name="alias">别名</param>
         public void Register( Type entity, string alias ) {
-            if ( Data.ContainsKey( entity ) )
-                Data.Remove( entity );
             Data[entity] = alias;
         }
 

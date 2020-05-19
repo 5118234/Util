@@ -69,12 +69,33 @@ namespace Util.Datas.Tests.Sql.Builders.MySql {
             var result = new String();
             result.AppendLine( "Select `a3`.`a`,`a1`.`b1`,`a2`.`b2` " );
             result.AppendLine( "From `b` As `a2` " );
-            result.Append( "Join `t.c` As `a3` On `a2`.`d`=`a3`.`e`" );
+            result.Append( "Join `t.c` As `a3` On `a2`.`d`=@_p_0" );
 
             //执行
-            _builder.Select( "a,a1.b1,`a2.b2`", "a3" )
+            _builder.Select( "a,a1.b1,a2.b2", "a3" )
                 .From( "b", "a2" )
-                .Join( "t.c", "a3" ).On( "a2.d", "a3.e" );
+                .Join( "t.c", "a3" ).On( "a2.d", "e" );
+
+            //验证
+            Assert.Equal( result.ToString(), _builder.ToSql() );
+        }
+
+        /// <summary>
+        /// 测试CTE
+        /// </summary>
+        [Fact]
+        public void TestWith() {
+            //结果
+            var result = new String();
+            result.AppendLine( "With Recursive `Test` " );
+            result.AppendLine( "As (Select `a`,`b` " );
+            result.AppendLine( "From `Test2`)" );
+            result.AppendLine( "Select `a`,`b` " );
+            result.Append( "From `Test`" );
+
+            //执行
+            var builder2 = _builder.New().Select( "a,b" ).From( "Test2" );
+            _builder.Select( "a,b" ).From( "Test" ).With( "Test", builder2 );
 
             //验证
             Assert.Equal( result.ToString(), _builder.ToSql() );

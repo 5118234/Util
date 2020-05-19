@@ -18,7 +18,7 @@ namespace Util.Datas.Ef.Core {
     /// 查询存储器
     /// </summary>
     /// <typeparam name="TEntity">对象类型</typeparam>
-    public abstract class QueryStoreBase<TEntity> : QueryStoreBase<TEntity, Guid>, IQueryStore<TEntity> where TEntity : class, IKey<Guid> {
+    public abstract partial class QueryStoreBase<TEntity> : QueryStoreBase<TEntity, Guid>, IQueryStore<TEntity> where TEntity : class, IKey<Guid> {
         /// <summary>
         /// 初始化查询存储器
         /// </summary>
@@ -32,7 +32,7 @@ namespace Util.Datas.Ef.Core {
     /// </summary>
     /// <typeparam name="TEntity">对象类型</typeparam>
     /// <typeparam name="TKey">对象标识类型</typeparam>
-    public abstract class QueryStoreBase<TEntity, TKey> : IQueryStore<TEntity, TKey> where TEntity : class, IKey<TKey> {
+    public abstract partial class QueryStoreBase<TEntity, TKey> : IQueryStore<TEntity, TKey> where TEntity : class, IKey<TKey> {
         /// <summary>
         /// Sql查询对象
         /// </summary>
@@ -64,7 +64,16 @@ namespace Util.Datas.Ef.Core {
         /// <summary>
         /// Sql查询对象
         /// </summary>
-        protected virtual Util.Datas.Sql.ISqlQuery Sql => _sqlQuery ?? ( _sqlQuery = Ioc.Create<Util.Datas.Sql.ISqlQuery>() );
+        protected Util.Datas.Sql.ISqlQuery Sql => _sqlQuery ?? ( _sqlQuery = CreateSqlQuery() );
+
+        /// <summary>
+        /// 创建Sql查询对象
+        /// </summary>
+        protected virtual Util.Datas.Sql.ISqlQuery CreateSqlQuery() {
+            var result = Ioc.Create<Util.Datas.Sql.ISqlQuery>();
+            result.SetConnection( Connection );
+            return result;
+        }
 
         /// <summary>
         /// 获取未跟踪查询对象
